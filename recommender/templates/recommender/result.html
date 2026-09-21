@@ -1,0 +1,122 @@
+{% extends "recommender/base.html" %}
+
+{% block title %}Result — {{ top_pick.crop_display }}{% endblock %}
+{% block page_eyebrow %}Agronomic Evaluation Output{% endblock %}
+{% block page_title %}Cultivation Suitability Assessment{% endblock %}
+{% block page_subtitle %}
+  Inference produced by the trained 100-tree Random Forest classifier (99.55% accuracy) across 22 agricultural crop classes.
+{% endblock %}
+
+{% block content %}
+<div style="max-width: 920px;">
+
+  <!-- ── Hero: Primary Recommendation ────────────── -->
+  <div class="result-hero">
+    <div class="result-eyebrow" role="status" aria-live="polite">Primary Recommendation</div>
+
+    <div class="crop-hero-name" id="recommended-crop">{{ top_pick.crop_display }}</div>
+
+    <div class="confidence-score" style="margin-top: 0.6rem;">
+      <span style="color: var(--ink-soft);">Model Confidence&nbsp;&mdash;&nbsp;</span>
+      <strong style="color: var(--accent-wheat); font-size: 1.7rem; font-family: var(--font-serif);">
+        {{ top_pick.probability }}%
+      </strong>
+    </div>
+
+    <p style="color: var(--ink-soft); font-size: 0.9rem; margin-top: 0.85rem; line-height: 1.6; max-width: 680px;">
+      Given the recorded soil balance
+      (N&nbsp;{{ raw_inputs.N }}&nbsp;kg/ha · P&nbsp;{{ raw_inputs.P }}&nbsp;kg/ha · K&nbsp;{{ raw_inputs.K }}&nbsp;kg/ha · pH&nbsp;{{ raw_inputs.ph }})
+      and ambient conditions
+      ({{ raw_inputs.temperature }}&nbsp;°C · {{ raw_inputs.humidity }}&nbsp;% humidity · {{ raw_inputs.rainfall }}&nbsp;mm rainfall),
+      <strong style="color: var(--paper);">{{ top_pick.crop_display }}</strong> demonstrates the highest agronomic affinity.
+    </p>
+  </div>
+
+  <!-- ── Other Possibilities ──────────────────────── -->
+  <section style="margin-bottom: 2.5rem;">
+    <div style="display: flex; align-items: center; justify-content: space-between;
+                margin-bottom: 1rem; border-bottom: 1px solid var(--line); padding-bottom: 0.6rem;">
+      <h2 style="font-family: var(--font-serif); font-size: 1.35rem; color: var(--paper);">
+        Other Possibilities
+      </h2>
+      <span style="font-size: 0.775rem; color: var(--ink-soft);">Ranked Alternative Candidates</span>
+    </div>
+
+    <div class="candidates-grid">
+      {% for candidate in other_possibilities %}
+        <div class="candidate-card">
+          <div class="candidate-rank">Rank #{{ forloop.counter|add:1 }} Candidate</div>
+          <div class="candidate-name">{{ candidate.crop_display }}</div>
+          <div style="display: flex; justify-content: space-between; align-items: center;
+                      font-size: 0.875rem; color: var(--ink-soft); margin-top: 0.3rem;">
+            <span>Affinity Score</span>
+            <strong style="color: var(--accent-wheat); font-family: var(--font-serif); font-size: 1.05rem;">
+              {{ candidate.probability }}%
+            </strong>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" style="width: {{ candidate.probability }}%;"></div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ── Parameter Recap ──────────────────────────── -->
+  <section class="paper-card" style="margin-bottom: 2.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+      <h2 style="font-family: var(--font-serif); font-size: 1.3rem; color: var(--soil-dark);">
+        Diagnostic Parameters Recap
+      </h2>
+      <span class="section-tag">Recorded Values</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="data-table" aria-label="Input parameter values used for this recommendation">
+        <thead>
+          <tr>
+            <th>Category</th>
+            <th>Feature</th>
+            <th>Recorded Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in input_recap %}
+            <tr>
+              <td style="color: var(--slate-600); font-size: 0.85rem;">{{ item.section }}</td>
+              <td style="font-weight: 600; color: var(--soil-dark);">{{ item.name }}</td>
+              <td class="numeric" style="color: var(--accent-clay);">{{ item.value }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ── Action Navigation ────────────────────────── -->
+  <div style="display: flex; gap: 0.85rem; align-items: center; flex-wrap: wrap;">
+    <a href="{% url 'recommender:home' %}" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+      New Assessment
+    </a>
+    <a href="{% url 'recommender:model_comparison' %}" class="btn-secondary">
+      Model Comparison
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+    <a href="{% url 'recommender:insights' %}" class="btn-secondary">
+      Feature Insights &amp; PCA
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </a>
+  </div>
+
+</div>
+{% endblock %}

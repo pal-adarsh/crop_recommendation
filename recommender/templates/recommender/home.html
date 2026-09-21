@@ -1,0 +1,177 @@
+{% extends "recommender/base.html" %}
+
+{% block title %}Crop Recommendation Form{% endblock %}
+{% block page_eyebrow %}Field Assessment &amp; Diagnostics{% endblock %}
+{% block page_title %}Agronomic Input Parameters{% endblock %}
+{% block page_subtitle %}
+  Enter laboratory soil test readings and local climate observations to receive an ML-driven crop recommendation with ranked alternatives.
+{% endblock %}
+
+{% block content %}
+<form method="post" action="{% url 'recommender:home' %}" id="crop-recommendation-form" novalidate>
+  {% csrf_token %}
+
+  {% if form.non_field_errors %}
+    <div class="dark-card" style="border-left: 4px solid #B22222; margin-bottom: 1.75rem;" role="alert">
+      {% for error in form.non_field_errors %}
+        <p class="form-error">{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Two-Section Form Grid -->
+  <div class="form-grid-layout">
+
+    <!-- ── Section 1: Soil Nutrients ───────────────── -->
+    <div class="form-section-card">
+      <div class="section-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="var(--accent-clay)" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M2 22h20"/>
+          <path d="M6 18V6c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v12"/>
+          <path d="M6 12h12"/>
+        </svg>
+        <h2 class="section-title">1. Soil Nutrients</h2>
+        <span class="section-tag">Lab Analysis</span>
+      </div>
+
+      <!-- N -->
+      <div class="form-group">
+        <label for="{{ form.N.id_for_label }}" class="form-label">{{ form.N.label }}</label>
+        {{ form.N }}
+        {% if form.N.help_text %}<small class="form-help">{{ form.N.help_text }}</small>{% endif %}
+        {% for err in form.N.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+      </div>
+
+      <!-- P -->
+      <div class="form-group">
+        <label for="{{ form.P.id_for_label }}" class="form-label">{{ form.P.label }}</label>
+        {{ form.P }}
+        {% if form.P.help_text %}<small class="form-help">{{ form.P.help_text }}</small>{% endif %}
+        {% for err in form.P.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+      </div>
+
+      <!-- K -->
+      <div class="form-group">
+        <label for="{{ form.K.id_for_label }}" class="form-label">{{ form.K.label }}</label>
+        {{ form.K }}
+        {% if form.K.help_text %}<small class="form-help">{{ form.K.help_text }}</small>{% endif %}
+        {% for err in form.K.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+      </div>
+
+      <!-- pH -->
+      <div class="form-group">
+        <label for="{{ form.ph.id_for_label }}" class="form-label">{{ form.ph.label }}</label>
+        {{ form.ph }}
+        {% if form.ph.help_text %}<small class="form-help">{{ form.ph.help_text }}</small>{% endif %}
+        {% for err in form.ph.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+      </div>
+    </div>
+
+    <!-- ── Section 2: Climate Conditions ───────────── -->
+    <div class="form-section-card">
+      <div class="section-header">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+             stroke="var(--accent-wheat)" stroke-width="2.2"
+             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+        </svg>
+        <h2 class="section-title">2. Climate Conditions</h2>
+        <span class="section-tag">Environmental</span>
+      </div>
+
+      <!-- Temperature -->
+      <div class="form-group">
+        <label for="{{ form.temperature.id_for_label }}" class="form-label">{{ form.temperature.label }}</label>
+        {{ form.temperature }}
+        {% if form.temperature.help_text %}<small class="form-help">{{ form.temperature.help_text }}</small>{% endif %}
+        {% for err in form.temperature.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+      </div>
+
+      <!-- Humidity -->
+      <div class="form-group">
+        <label for="{{ form.humidity.id_for_label }}" class="form-label">{{ form.humidity.label }}</label>
+        {{ form.humidity }}
+        {% if form.humidity.help_text %}<small class="form-help">{{ form.humidity.help_text }}</small>{% endif %}
+        {% for err in form.humidity.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+      </div>
+
+      <!-- Rainfall -->
+      <div class="form-group">
+        <label for="{{ form.rainfall.id_for_label }}" class="form-label">{{ form.rainfall.label }}</label>
+        {{ form.rainfall }}
+        {% if form.rainfall.help_text %}<small class="form-help">{{ form.rainfall.help_text }}</small>{% endif %}
+        {% for err in form.rainfall.errors %}<p class="form-error">{{ err }}</p>{% endfor %}
+      </div>
+
+      <!-- Quick Test Presets -->
+      <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--paper-dim);">
+        <span style="font-size: 0.73rem; font-weight: 700; text-transform: uppercase;
+                     letter-spacing: 0.05em; color: var(--slate-600); display: block; margin-bottom: 0.6rem;">
+          Quick Test Presets
+        </span>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button type="button" id="preset-rice"
+                  onclick="setPreset(90, 42, 43, 6.5, 21.0, 82.0, 203.0)"
+                  style="font-size: 0.78rem; font-weight: 600; padding: 0.4rem 0.8rem;
+                         background: var(--paper-dim); border: 1.5px solid #C8BAA4;
+                         border-radius: var(--radius-sm); cursor: pointer; color: var(--soil-dark);
+                         transition: background 0.15s, border-color 0.15s;"
+                  onmouseover="this.style.background='#DDD4C0'"
+                  onmouseout="this.style.background='var(--paper-dim)'">
+            🌾 Rice Benchmark
+          </button>
+          <button type="button" id="preset-coffee"
+                  onclick="setPreset(100, 20, 30, 6.8, 25.0, 60.0, 160.0)"
+                  style="font-size: 0.78rem; font-weight: 600; padding: 0.4rem 0.8rem;
+                         background: var(--paper-dim); border: 1.5px solid #C8BAA4;
+                         border-radius: var(--radius-sm); cursor: pointer; color: var(--soil-dark);
+                         transition: background 0.15s, border-color 0.15s;"
+                  onmouseover="this.style.background='#DDD4C0'"
+                  onmouseout="this.style.background='var(--paper-dim)'">
+            ☕ Coffee Benchmark
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit Row -->
+  <div class="form-submit-row">
+    <button type="submit" class="btn-primary" id="submit-recommendation">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+      Get recommendation
+    </button>
+    <span style="color: var(--ink-soft); font-size: 0.85rem; line-height: 1.4;">
+      Random Forest ensemble · 99.55% test accuracy · 22 crop classes
+    </span>
+  </div>
+
+</form>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function setPreset(n, p, k, ph, temp, hum, rain) {
+    document.getElementById('{{ form.N.id_for_label }}').value = n;
+    document.getElementById('{{ form.P.id_for_label }}').value = p;
+    document.getElementById('{{ form.K.id_for_label }}').value = k;
+    document.getElementById('{{ form.ph.id_for_label }}').value = ph;
+    document.getElementById('{{ form.temperature.id_for_label }}').value = temp;
+    document.getElementById('{{ form.humidity.id_for_label }}').value = hum;
+    document.getElementById('{{ form.rainfall.id_for_label }}').value = rain;
+  }
+
+  // Visual loading feedback on submit
+  document.getElementById('crop-recommendation-form').addEventListener('submit', function () {
+    const btn = document.getElementById('submit-recommendation');
+    btn.textContent = 'Running inference…';
+    btn.disabled = true;
+    btn.style.opacity = '0.75';
+  });
+</script>
+{% endblock %}

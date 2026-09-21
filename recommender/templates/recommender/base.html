@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Agronomic crop recommendation system using ML. Enter soil nutrients and climate data to get the optimal crop for cultivation from 22 crop classes.">
+  <title>{% block title %}Crop Recommendation{% endblock %} — Agronomic Field Panel</title>
+
+  <!-- Google Fonts: Fraunces (Serif Headlines/Numbers) + Inter (Sans Body/Controls) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Design System CSS -->
+  <link rel="stylesheet" href="{% static 'recommender/css/style.css' %}">
+
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- ── Site Navigation ─────────────────────────────── -->
+  <header class="site-header">
+    <div class="container">
+      <nav class="nav-bar" aria-label="Main Navigation">
+        <!-- Brand -->
+        <a href="{% url 'recommender:home' %}" class="brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 22V12"/>
+            <path d="M5 12c0-3.87 3.13-7 7-7s7 3.13 7 7"/>
+            <path d="M3 17c0 0 2-2 5-2s5 2 8 2 5-2 5-2"/>
+            <path d="M3 21c0 0 2-2 5-2s5 2 8 2 5-2 5-2"/>
+          </svg>
+          <span class="brand-title">CropRecommender</span>
+          <span class="brand-badge">Field Panel</span>
+        </a>
+
+        <!-- Nav Links -->
+        <ul class="nav-menu" role="list">
+          <li>
+            <a href="{% url 'recommender:home' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'home' %}aria-current="page"{% endif %}>
+              Recommendation
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'recommender:model_comparison' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'model_comparison' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'model_comparison' %}aria-current="page"{% endif %}>
+              Model Comparison
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'recommender:insights' %}"
+               class="nav-link {% if request.resolver_match.url_name == 'insights' %}active{% endif %}"
+               {% if request.resolver_match.url_name == 'insights' %}aria-current="page"{% endif %}>
+              Insights & PCA
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+
+    <!-- Soil-Strata Animated Accent Band -->
+    <div class="soil-strata-motif" aria-hidden="true">
+      <svg preserveAspectRatio="none" viewBox="0 0 1200 10">
+        <line class="strata-line strata-line-1" x1="0" y1="2"  x2="1200" y2="2" />
+        <line class="strata-line strata-line-2" x1="0" y1="4"  x2="1200" y2="4" />
+        <line class="strata-line strata-line-3" x1="0" y1="7"  x2="1200" y2="7" />
+        <line class="strata-line strata-line-4" x1="0" y1="9.5" x2="1200" y2="9.5" />
+      </svg>
+    </div>
+  </header>
+
+  <!-- ── Page Banner ─────────────────────────────────── -->
+  <section class="page-banner">
+    <div class="container">
+      <p class="page-eyebrow">{% block page_eyebrow %}Agronomic Machine Learning System{% endblock %}</p>
+      <h1 class="page-title">{% block page_title %}Optimal Crop Recommendation{% endblock %}</h1>
+      <p class="page-subtitle">{% block page_subtitle %}Predict the most suitable crop based on soil nutrients and climatic parameters across 22 agricultural classes.{% endblock %}</p>
+    </div>
+  </section>
+
+  <!-- ── Main Content ────────────────────────────────── -->
+  <main class="main-content" id="main-content">
+    <div class="container">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+  <!-- ── Footer ─────────────────────────────────────── -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-content">
+        <span class="footer-brand">CropRecommender — 22-Class Agronomic Classifier</span>
+        <p class="footer-disclaimer">
+          Academic Demonstration · BE Machine Learning Lab Mini Project.
+          Predictions are produced by a trained Random Forest classifier (99.55% test accuracy) and are intended solely for academic review — not a substitute for professional agronomic soil analysis.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

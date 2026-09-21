@@ -1,0 +1,95 @@
+{
+  "models": {
+    "CART": {
+      "accuracy": 96.36,
+      "precision": 97.18,
+      "recall": 96.36,
+      "f1_score": 96.39,
+      "accuracy_raw": 0.9636363636363636,
+      "precision_raw": 0.9717837726403864,
+      "recall_raw": 0.9636363636363636,
+      "f1_raw": 0.9638960282078773
+    },
+    "Random Forest": {
+      "accuracy": 99.55,
+      "precision": 99.57,
+      "recall": 99.55,
+      "f1_score": 99.55,
+      "accuracy_raw": 0.9954545454545455,
+      "precision_raw": 0.9956709956709956,
+      "recall_raw": 0.9954545454545455,
+      "f1_raw": 0.9954517027687759
+    },
+    "AdaBoost": {
+      "accuracy": 31.36,
+      "precision": 17.66,
+      "recall": 31.36,
+      "f1_score": 20.49,
+      "accuracy_raw": 0.31363636363636366,
+      "precision_raw": 0.1766053723885049,
+      "recall_raw": 0.31363636363636366,
+      "f1_raw": 0.2049230107492915
+    },
+    "SVM": {
+      "accuracy": 98.41,
+      "precision": 98.56,
+      "recall": 98.41,
+      "f1_score": 98.4,
+      "accuracy_raw": 0.9840909090909091,
+      "precision_raw": 0.9856099105110961,
+      "recall_raw": 0.9840909090909091,
+      "f1_raw": 0.9840381050638686
+    }
+  },
+  "feature_importances": {
+    "rainfall": 0.2302,
+    "humidity": 0.2242,
+    "K": 0.1754,
+    "P": 0.1508,
+    "N": 0.0964,
+    "temperature": 0.0724,
+    "ph": 0.0506
+  },
+  "pca_variance": {
+    "pc1": 27.59,
+    "pc2": 18.48,
+    "total": 46.07,
+    "components": [
+      0.2758883143020736,
+      0.184844310953646
+    ]
+  },
+  "classes": [
+    "apple",
+    "banana",
+    "blackgram",
+    "chickpea",
+    "coconut",
+    "coffee",
+    "cotton",
+    "grapes",
+    "jute",
+    "kidneybeans",
+    "lentil",
+    "maize",
+    "mango",
+    "mothbeans",
+    "mungbean",
+    "muskmelon",
+    "orange",
+    "papaya",
+    "pigeonpeas",
+    "pomegranate",
+    "rice",
+    "watermelon"
+  ],
+  "feature_names": [
+    "N",
+    "P",
+    "K",
+    "temperature",
+    "humidity",
+    "ph",
+    "rainfall"
+  ]
+}
