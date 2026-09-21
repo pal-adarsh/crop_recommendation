@@ -1,51 +1,60 @@
 {% extends "recommender/base.html" %}
 {% load static %}
 
-{% block title %}Feature Insights & PCA — Crop Recommendation{% endblock %}
-
-{% block page_eyebrow %}Data Science & Dimensionality Reduction{% endblock %}
-{% block page_title %}Feature Importance & PCA Projection{% endblock %}
+{% block title %}Feature Insights &amp; PCA — Crop Recommendation{% endblock %}
+{% block page_eyebrow %}Data Science &amp; Dimensionality Reduction{% endblock %}
+{% block page_title %}Feature Importance &amp; PCA Projection{% endblock %}
 {% block page_subtitle %}
-  Exploring feature contributions to Random Forest decision trees and 2D Principal Component projections of 2,200 agricultural samples.
+  Exploring feature contributions to the Random Forest decision ensemble and 2D Principal Component projections of all 2,200 agricultural samples.
 {% endblock %}
 
 {% block content %}
-<div style="display: flex; flex-direction: column; gap: 2.75rem;">
+<div style="display: flex; flex-direction: column; gap: 2.25rem;">
 
-  <!-- SECTION 1: Feature Importance -->
-  <div class="paper-card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1.5px solid var(--paper-dim); padding-bottom: 0.75rem;">
+  <!-- ── 1. Feature Importance ─────────────────────── -->
+  <section class="paper-card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;
+                flex-wrap: wrap; gap: 0.75rem;
+                margin-bottom: 1rem; border-bottom: 1.5px solid var(--paper-dim); padding-bottom: 0.85rem;">
       <div>
-        <h2 style="font-family: var(--font-serif); font-size: 1.45rem; color: var(--soil-dark);">
+        <h2 style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--soil-dark);">
           1. Random Forest Gini Feature Importance
         </h2>
-        <p style="color: var(--slate-600); font-size: 0.9rem; margin-top: 0.25rem;">
-          Quantifying how much each soil and climatic feature reduces impurity across 100 decision trees.
+        <p style="color: var(--slate-600); font-size: 0.875rem; margin-top: 0.25rem;">
+          Mean decrease in Gini impurity attributed to each input feature across 100 decision trees.
         </p>
       </div>
       <span class="section-tag">Gini Importance</span>
     </div>
 
-    <!-- Agronomic Insight Callout -->
-    <div style="background-color: var(--paper-dim); padding: 1rem 1.25rem; border-radius: var(--radius-sm); border-left: 4px solid var(--accent-clay); margin-bottom: 1.75rem;">
-      <p style="color: var(--soil-dark); font-size: 0.925rem; font-weight: 500; line-height: 1.5;">
-        <strong>Key Finding:</strong> <em>Rainfall</em> (23.02%) and <em>Relative Humidity</em> (22.42%) are the primary governing drivers of crop suitability in this dataset, collectively accounting for over 45% of total model decision weight, followed by Potassium (K) and Phosphorus (P).
+    <!-- Key Finding Callout -->
+    <div style="background-color: var(--paper-dim); padding: 1rem 1.25rem;
+                border-radius: var(--radius-sm); border-left: 4px solid var(--accent-clay);
+                margin-bottom: 1.75rem;">
+      <p style="color: var(--soil-dark); font-size: 0.9rem; font-weight: 500; line-height: 1.6;">
+        <strong>Key Finding:</strong> <em>Rainfall</em> and <em>Relative Humidity</em>
+        are the dominant predictors, jointly accounting for &gt;45% of total model decision weight.
+        Potassium (K) and Phosphorus (P) rank third and fourth — the NPK ratio matters but moisture signals govern.
       </p>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center;">
-      <!-- Pre-generated Feature Importance Plot -->
+    <!-- Feature Importance Bar List + Pre-gen Plot -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;">
+
+      <!-- Plot image -->
       <div>
-        <img src="{% static 'recommender/img/feature_importance.png' %}" 
-             alt="Random Forest Feature Importance Chart" 
-             style="width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--paper-dim); display: block;" />
+        <img src="{% static 'recommender/img/feature_importance.png' %}"
+             alt="Horizontal bar chart showing Random Forest Gini feature importances for all 7 input features"
+             style="width: 100%; height: auto; border-radius: var(--radius-sm);
+                    border: 1px solid var(--paper-dim); display: block;" />
       </div>
 
-      <!-- Feature Importance Data Table & Meters -->
+      <!-- Ranked table with bar meters -->
       <div>
-        <table class="data-table" style="width: 100%;">
+        <table class="data-table" aria-label="Feature importance scores ranked by Gini weight">
           <thead>
             <tr>
+              <th>#</th>
               <th>Feature</th>
               <th>Score</th>
               <th>Relative Weight</th>
@@ -54,18 +63,27 @@
           <tbody>
             {% for item in feature_importances %}
               <tr>
-                <td style="font-weight: 600; color: var(--soil-dark);">
-                  {{ item.feature_label }}
+                <td style="color: var(--slate-600); font-size: 0.8rem; font-weight: 600;">
+                  {{ forloop.counter }}
                 </td>
-                <td class="numeric" style="color: var(--accent-clay);">
+                <td style="font-weight: 600; color: var(--soil-dark);">{{ item.feature_label }}</td>
+                <td class="numeric" style="color: var(--accent-clay); white-space: nowrap;">
                   {{ item.importance }}
                 </td>
-                <td style="width: 45%;">
-                  <div style="display: flex; align-items: center; gap: 0.5rem;">
-                    <div style="flex: 1; height: 10px; background-color: var(--paper-dim); border-radius: 5px; overflow: hidden;">
-                      <div style="height: 100%; width: {{ item.bar_width }}%; background-color: {% if forloop.counter <= 2 %}var(--accent-clay){% elif forloop.counter <= 4 %}var(--accent-wheat){% else %}var(--slate-600){% endif %}; border-radius: 5px;"></div>
+                <td style="min-width: 100px;">
+                  <div style="display: flex; align-items: center; gap: 0.45rem;">
+                    <div style="flex: 1; height: 8px; background-color: var(--paper-dim);
+                                border-radius: 4px; overflow: hidden;">
+                      <div style="height: 100%; width: {{ item.bar_width }}%;
+                                  background-color: {% if forloop.counter == 1 %}var(--accent-clay)
+                                                   {% elif forloop.counter == 2 %}#C47840
+                                                   {% elif forloop.counter <= 4 %}var(--accent-wheat)
+                                                   {% else %}#A69C87{% endif %};
+                                  border-radius: 4px; transition: width 0.6s ease;">
+                      </div>
                     </div>
-                    <span style="font-size: 0.775rem; color: var(--slate-600); min-width: 38px;">{{ item.percentage }}%</span>
+                    <span style="font-size: 0.74rem; color: var(--slate-600);
+                                 min-width: 42px; text-align: right;">{{ item.percentage }}%</span>
                   </div>
                 </td>
               </tr>
@@ -74,56 +92,65 @@
         </table>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- SECTION 2: PCA Scatter Plot -->
-  <div class="dark-card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--line); padding-bottom: 0.75rem;">
+  <!-- ── 2. PCA Projection ─────────────────────────── -->
+  <section class="dark-card">
+    <div style="display: flex; justify-content: space-between; align-items: flex-start;
+                flex-wrap: wrap; gap: 0.75rem;
+                margin-bottom: 1rem; border-bottom: 1px solid var(--line); padding-bottom: 0.85rem;">
       <div>
-        <h2 style="font-family: var(--font-serif); font-size: 1.45rem; color: var(--paper);">
+        <h2 style="font-family: var(--font-serif); font-size: 1.4rem; color: var(--paper);">
           2. Principal Component Analysis (PCA) 2D Projection
         </h2>
-        <p style="color: var(--ink-soft); font-size: 0.9rem; margin-top: 0.25rem;">
-          Linear dimensionality reduction mapping the 7-dimensional standardized dataset onto 2 principal components.
+        <p style="color: var(--ink-soft); font-size: 0.875rem; margin-top: 0.25rem;">
+          Linear dimensionality reduction projecting the 7D standardised feature space onto 2 principal axes.
         </p>
       </div>
       <span class="brand-badge">{{ pca_variance.total }}% Variance Retained</span>
     </div>
 
-    <!-- PCA Stats Highlight -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.75rem;">
-      <div style="background-color: rgba(0,0,0,0.25); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--line);">
-        <span style="font-size: 0.75rem; color: var(--ink-soft); text-transform: uppercase;">PC1 Explained Variance</span>
-        <div style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--accent-wheat); font-weight: 600;">{{ pca_variance.pc1 }}%</div>
+    <!-- PCA Stat Chips -->
+    <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 1.75rem;">
+      <div class="stat-chip">
+        <div class="stat-chip-label">PC1 Explained Variance</div>
+        <div class="stat-chip-value">{{ pca_variance.pc1 }}%</div>
       </div>
-      <div style="background-color: rgba(0,0,0,0.25); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--line);">
-        <span style="font-size: 0.75rem; color: var(--ink-soft); text-transform: uppercase;">PC2 Explained Variance</span>
-        <div style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--accent-wheat); font-weight: 600;">{{ pca_variance.pc2 }}%</div>
+      <div class="stat-chip">
+        <div class="stat-chip-label">PC2 Explained Variance</div>
+        <div class="stat-chip-value">{{ pca_variance.pc2 }}%</div>
       </div>
-      <div style="background-color: rgba(0,0,0,0.25); padding: 1rem; border-radius: var(--radius-sm); border: 1px solid var(--line);">
-        <span style="font-size: 0.75rem; color: var(--ink-soft); text-transform: uppercase;">Cumulative 2D Retention</span>
-        <div style="font-family: var(--font-serif); font-size: 1.6rem; color: var(--signal-grow); font-weight: 600;">{{ pca_variance.total }}%</div>
+      <div class="stat-chip">
+        <div class="stat-chip-label">Cumulative 2D Retention</div>
+        <div class="stat-chip-value green">{{ pca_variance.total }}%</div>
       </div>
     </div>
 
-    <!-- Pre-generated PCA Scatter Plot -->
-    <div style="text-align: center; margin-bottom: 1.25rem;">
-      <img src="{% static 'recommender/img/pca_scatter.png' %}" 
-           alt="PCA 2D Scatter Plot of 22 Crop Classes" 
-           style="max-width: 100%; height: auto; border-radius: var(--radius-sm); border: 1px solid var(--line); box-shadow: 0 4px 20px rgba(0,0,0,0.35); display: inline-block;" />
+    <!-- PCA Scatter Plot -->
+    <div style="text-align: center; margin-bottom: 1.5rem;">
+      <img src="{% static 'recommender/img/pca_scatter.png' %}"
+           alt="PCA 2D scatter plot of all 2,200 crop samples across 22 classes, colour-coded by species"
+           style="max-width: 100%; height: auto; border-radius: var(--radius-sm);
+                  border: 1px solid var(--line); box-shadow: var(--shadow-dark); display: inline-block;" />
     </div>
 
-    <!-- Cluster Analysis Notes -->
-    <div style="background-color: rgba(0,0,0,0.2); padding: 1.25rem; border-radius: var(--radius-sm); border-left: 3px solid var(--accent-wheat);">
-      <h4 style="font-family: var(--font-serif); font-size: 1rem; color: var(--paper); margin-bottom: 0.4rem;">
-        Clustering & Multiclass Separability Observations
-      </h4>
-      <p style="color: var(--ink-soft); font-size: 0.875rem; line-height: 1.6;">
-        The 2D projection demonstrates clear, isolated cluster boundaries for high-moisture/specialized crops such as <strong>rice</strong>, <strong>coffee</strong>, and <strong>coconut</strong>. Conversely, grain and legume varieties (blackgram, mungbean, lentil) form tight overlapping clusters in 2D space, demonstrating why non-linear Random Forest classifiers with depth are required to achieve 99.55% classification accuracy across all 22 classes.
+    <!-- Clustering Interpretation -->
+    <div style="background-color: rgba(0,0,0,0.2); padding: 1.25rem;
+                border-radius: var(--radius-sm); border-left: 3px solid var(--accent-wheat);">
+      <h3 style="font-family: var(--font-serif); font-size: 1rem; color: var(--paper); margin-bottom: 0.4rem;">
+        Cluster Separability Observations
+      </h3>
+      <p style="color: var(--ink-soft); font-size: 0.875rem; line-height: 1.65;">
+        The projection reveals clear, isolated clusters for high-moisture/specialist crops
+        (<strong style="color: var(--paper);">rice</strong>, <strong style="color: var(--paper);">coffee</strong>,
+        <strong style="color: var(--paper);">coconut</strong>) along the PC1 axis.
+        Grain and legume varieties
+        (<em>blackgram</em>, <em>mungbean</em>, <em>lentil</em>) overlap significantly in this reduced 2D space,
+        explaining why non-linear, depth-constrained Random Forest classifiers are required for
+        the 99.55% accuracy — one-dimensional projection alone cannot separate them.
       </p>
     </div>
-
-  </div>
+  </section>
 
 </div>
 {% endblock %}
